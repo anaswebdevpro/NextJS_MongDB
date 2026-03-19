@@ -1,11 +1,9 @@
 import { connect } from "mongoose";
 
-const mongoDB_URL = process.env.MONGODB_URL || process.env.MONGODB_URI;
+const mongoDB_URL = process.env.MONGODB_URL;
 
 if (!mongoDB_URL) {
-  throw new Error(
-    "MongoDB URL not found. Set MONGODB_URL (or MONGODB_URI) in .env",
-  );
+  throw new Error("MongoDB URL not found. Set MONGODB_URL in .env");
 }
 
 let cached = global.mongoose;
@@ -16,6 +14,7 @@ if (!cached) {
 
 const connectDb = async () => {
   if (cached.conn) {
+    console.log("Using cached MongoDB connection");
     return cached.conn;
   }
 
@@ -25,9 +24,11 @@ const connectDb = async () => {
 
   try {
     cached.conn = await cached.promise;
+    console.log("MongoDB connection established");
   } catch (error) {
     throw error;
   }
+
   return cached.conn;
 };
 
